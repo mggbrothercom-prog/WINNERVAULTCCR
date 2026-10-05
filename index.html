@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+<title>WINNER VAULT</title>
+
+<style>
+*{
+ box-sizing:border-box;
+}
+
+body{
+ margin:0;
+ min-height:100vh;
+ background:#020704;
+ color:#fff;
+ font-family:Arial,sans-serif;
+ overflow-x:hidden;
+}
+
+body:before{
+ content:"";
+ position:fixed;
+ inset:0;
+ pointer-events:none;
+ background:
+ radial-gradient(circle at 50% 0%,rgba(0,255,90,.12),transparent 40%),
+ linear-gradient(rgba(0,255,100,.025) 1px,transparent 1px),
+ linear-gradient(90deg,rgba(0,255,100,.025) 1px,transparent 1px);
+ background-size:auto,35px 35px,35px 35px;
+}
+
+:root{
+ --green:#00ff66;
+ --green2:#00d957;
+ --dark:#03170b;
+ --line:#0aff68;
+}
+
+header{
+ position:sticky;
+ top:0;
+ z-index:10;
+ background:rgba(0,10,5,.88);
+ border-bottom:1px solid rgba(0,255,100,.2);
+ backdrop-filter:blur(15px);
+}
+
+.nav{
+ max-width:1100px;
+ margin:auto;
+ padding:17px;
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+}
+
+.logo{
+ color:var(--green);
+ font-size:20px;
+ font-weight:900;
+ letter-spacing:2px;
+ text-shadow:0 0 15px rgba(0,255,100,.5);
+}
+
+.balance{
+ border:1px solid rgba(0,255,100,.3);
+ padding:8px 13px;
+ border-radius:30px;
+ color:#8dffb5;
+ font-size:13px;
+}
+
+.container{
+ max-width:1100px;
+ margin:auto;
+ padding:25px 16px 60px;
+}
+
+.hero{
+ padding:28px;
+ border:1px solid rgba(0,255,100,.25);
+ border-radius:22px;
+ background:linear-gradient(145deg,#062512,#020b05);
+ box-shadow:0 0 50px rgba(0,255,80,.07);
+}
+
+.hero h1{
+ margin:0;
+ color:#fff;
+ font-size:clamp(30px,7vw,55px);
+}
+
+.hero h1 span{
+ color:var(--green);
+ text-shadow:0 0 20px rgba(0,255,100,.45);
+}
+
+.hero p{
+ color:#71977e;
+ line-height:1.7;
+}
+
+.products{
+ margin-top:25px;
+ display:grid;
+ grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+ gap:15px;
+}
+
+.card{
+ background:linear-gradient(150deg,#071d10,#031009);
+ border:1px solid rgba(0,255,100,.2);
+ border-radius:18px;
+ padding:19px;
+ position:relative;
+ overflow:hidden;
+}
+
+.card:before{
+ content:"";
+ position:absolute;
+ top:0;
+ left:0;
+ right:0;
+ height:2px;
+ background:linear-gradient(90deg,transparent,var(--green),transparent);
+}
+
+.card h3{
+ margin:0 0 10px;
+}
+
+.card p{
+ color:#71977e;
+ font-size:13px;
+}
+
+.price{
+ color:var(--green);
+ font-size:25px;
+ font-weight:900;
+ margin:15px 0;
+}
+
+.stock{
+ color:#70db91;
+ font-size:12px;
+}
+
+button{
+ font:inherit;
+ cursor:pointer;
+}
+
+.btn{
+ width:100%;
+ padding:13px;
+ margin-top:13px;
+ border-radius:11px;
+ border:1px solid rgba(0,255,100,.35);
+ background:#062313;
+ color:#fff;
+ font-weight:800;
+}
+
+.btn.green{
+ background:linear-gradient(135deg,#00ff62,#00c94e);
+ color:#001b09;
+ border-color:#00ff66;
+ box-shadow:0 0 20px rgba(0,255,100,.15);
+}
+
+.overlay{
+ position:fixed;
+ inset:0;
+ z-index:50;
+ display:none;
+ align-items:center;
+ justify-content:center;
+ padding:15px;
+ background:rgba(0,0,0,.82);
+ backdrop-filter:blur(8px);
+}
+
+.overlay.show{
+ display:flex;
+}
+
+.modal{
+ width:min(470px,100%);
+ max-height:94vh;
+ overflow:auto;
+ background:linear-gradient(160deg,#03180b,#020805);
+ border:1px solid var(--green);
+ border-radius:24px;
+ padding:24px;
+ box-shadow:
+ 0 0 30px rgba(0,255,100,.12),
+ 0 30px 100px #000;
+}
+
+.close{
+ float:right;
+ background:none;
+ border:0;
+ color:#8ab29a;
+ font-size:28px;
+}
+
+.payment-title{
+ text-align:center;
+ color:var(--green);
+ font-size:24px;
+ letter-spacing:1px;
+ font-weight:900;
+}
+
+.amount{
+ text-align:center;
+ font-size:42px;
+ font-weight:900;
+ margin:10px 0 18px;
+}
+
+.email{
+ text-align:center;
+ padding:13px;
+ border:1px solid rgba(0,255,100,.25);
+ background:#03200e;
+ color:#8effb4;
+ border-radius:12px;
+}
+
+.qr{
+ display:block;
+ width:min(280px,90%);
+ margin:22px auto;
+ padding:9px;
+ background:#fff;
+ border-radius:20px;
+}
+
+.center{
+ text-align:center;
+ color:#71977e;
+ line-height:1.7;
+ font-size:13px;
+}
+
+.note{
+ margin-top:17px;
+ padding:13px;
+ border-radius:12px;
+ background:rgba(255,40,40,.05);
+ border:1px solid rgba(255,50,50,.18);
+ color:#ff7777;
+ text-align:center;
+ font-size:12px;
+ font-weight:bold;
+ line-height:1.6;
+}
+
+.upi{
+ margin-top:15px;
+ padding:13px;
+ background:#031c0c;
+ border:1px solid rgba(0,255,100,.25);
+ border-radius:12px;
+ text-align:center;
+}
+
+.upi b{
+ color:var(--green);
+}
+
+footer{
+ text-align:center;
+ color:#42614c;
+ font-size:11px;
+ padding:30px;
+}
+
+@media(max-width:600px){
+
+ .hero{
+  padding:23px 18px;
+ }
+
+ .modal{
+  padding:20px;
+ }
+
+ .amount{
+  font-size:36px;
+ }
+
+}
+</style>
+</head>
+
+<body>
+
+<header>
+ <div class="nav">
+  <div class="logo">✦ WINNER VAULT</div>
+  <div class="balance">WINNER VAULT STORE</div>
+ </div>
+</header>
+
+<main class="container">
+
+<section class="hero">
+ <h1>WELCOME TO <span>VAULT</span></h1>
+ <p>
+  Premium digital products and redeem codes.
+  Select a product below to continue.
+ </p>
+</section>
+
+<section class="products" id="products"></section>
+
+</main>
+
+<footer>
+ © WINNER VAULT  • Digital Products
+</footer>
+
+
+<!-- PAYMENT MODAL -->
+
+<div class="overlay" id="paymentModal">
+
+ <div class="modal">
+
+  <button class="close" onclick="closePayment()">×</button>
+
+  <div class="payment-title">
+   COMPLETE PAYMENT
+  </div>
+
+  <div class="amount" id="amount">
+   ₹100
+  </div>
+
+  <div class="email" id="selectedProduct">
+   Digital Product
+  </div>
+
+  <img
+   class="qr"
+   src="https://res.cloudinary.com/dihj6dmbb/image/upload/v1791192047/quickurl/qr_1791192045118.png"
+   alt="UPI QR Code"
+  >
+
+  <div class="center">
+   Pay with any UPI app<br>
+   After payment click the button below.
+  </div>
+
+  <div class="note">
+   NOTE: Payment verification is required before
+   digital product/redeem-code fulfillment.
+  </div>
+
+  <div class="upi">
+   UPI ID:
+   <b id="upiText">ONLY qr code</b>
+  </div>
+
+  <button
+   class="btn"
+   onclick="copyUPI()">
+   COPY UPI ID
+  </button>
+
+  <button
+   class="btn green"
+   onclick="paymentDone()">
+   CHECK PAYMENT
+  </button>
+
+ </div>
+</div>
+
+
+<script>
+
+const telegram="https://t.me/Ownerffgarena";
+
+const products=[];
+
+
+/*
+  10 legitimate digital-card products
+  ₹100 each
+*/
+
+for(let i=1;i<=10;i++){
+
+ products.push({
+  id:"card"+i,
+  name:"Digital Card #"+i,
+  price:100,
+  stock:1,
+  type:"Digital Card"
+ });
+
+}
+
+
+/*
+  40 redeem-code products
+  ₹100 each
+*/
+
+for(let i=1;i<=40;i++){
+
+ products.push({
+  id:"redeem"+i,
+  name:"Redeem Code #"+i,
+  price:100,
+  stock:1,
+  type:"Redeem Code"
+ });
+
+}
+
+
+const productBox=
+document.getElementById("products");
+
+
+function renderProducts(){
+
+ productBox.innerHTML=
+ products.map(p=>`
+
+  <div class="card">
+
+   <h3>${escapeHTML(p.name)}</h3>
+
+   <p>
+    ${escapeHTML(p.type)}
+   </p>
+
+   <div class="price">
+    ₹${p.price}
+   </div>
+
+   <div class="stock">
+    Available
+   </div>
+
+   <button
+    class="btn green"
+    onclick="buyProduct('${p.id}')">
+
+    BUY NOW
+
+   </button>
+
+  </div>
+
+ `).join("");
+
+}
+
+
+let selectedProduct=null;
+
+
+function buyProduct(id){
+
+ selectedProduct=
+ products.find(p=>p.id===id);
+
+ if(!selectedProduct)return;
+
+ document.getElementById("amount")
+ .textContent=
+ "₹"+selectedProduct.price;
+
+ document.getElementById("selectedProduct")
+ .textContent=
+ selectedProduct.name;
+
+ document.getElementById("paymentModal")
+ .classList
+ .add("show");
+
+}
+
+
+function closePayment(){
+
+ document.getElementById("paymentModal")
+ .classList
+ .remove("show");
+
+}
+
+
+function copyUPI(){
+
+ const upi=
+ document.getElementById("upiText")
+ .textContent;
+
+ navigator.clipboard
+ .writeText(upi)
+ .then(()=>{
+  alert("UPI ID copied");
+ });
+
+}
+
+
+function paymentDone(){
+
+ if(!selectedProduct)return;
+
+ const message=
+ `Hello, payment done.%0A%0A`+
+ `Product: ${encodeURIComponent(selectedProduct.name)}%0A`+
+ `Amount: ₹${selectedProduct.price}%0A%0A`+
+ `Please verify my payment and fulfill my order.`;
+
+ window.open(
+  telegram+"?text="+message,
+  "_blank"
+ );
+
+}
+
+
+funrction escapeHTML(value){
+
+ return String(value)
+ .replace(/&/g,"&amp;")
+ .replace(/</g,"&lt;")
+ .replace(/>/g,"&gt;")
+ .replace(/"/g,"&quot;")
+ .replace(/'/g,"&#039;");
+
+}
+
+
+renderProducts();
+
+</script>
+
+</body>
+</html>;
